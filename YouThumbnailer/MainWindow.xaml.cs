@@ -23,6 +23,16 @@ namespace YouThumbnailer
     /// </summary>
     public partial class MainWindow : Window
     {
+        private FontFamily fontFamily = new System.Windows.Media.FontFamily("Arial");
+        private double fontSize = 14;
+        private FontStyle fontStyle = FontStyles.Normal;
+        private FontWeight fontWeight = FontWeights.Normal;
+        private TextAlignment textAlignment = TextAlignment.Left;
+        private Brush foreground = Brushes.Black;
+        private TextDecorationCollection textDecorations = null;
+        private VerticalAlignment verticalContentAlignment = VerticalAlignment.Top;
+
+        private TextBox selectedTextbox;
 
         public MainWindow()
         {
@@ -86,7 +96,148 @@ namespace YouThumbnailer
 
         private void btnText_Click(object sender, RoutedEventArgs e)
         {
+            canvas.Cursor = Cursors.IBeam;
+            canvas.EditingMode = InkCanvasEditingMode.None;
+        }
 
+        private void canvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (canvas.Cursor == Cursors.IBeam && e.Source.GetType() != typeof(TextBox))  //Insert text
+            {
+                TextBox txt = new TextBox();
+                txt.Text = "Add text here.";
+                txt.TextWrapping = TextWrapping.Wrap;
+                txt.AcceptsReturn = true;
+                txt.FontFamily = fontFamily;
+                txt.FontSize = fontSize;
+                txt.FontStyle = fontStyle;
+                txt.FontWeight = fontWeight;
+                txt.TextAlignment = textAlignment;
+                txt.Foreground = foreground;
+                txt.TextDecorations = textDecorations;
+                txt.VerticalContentAlignment = verticalContentAlignment;
+
+                txt.Background = Brushes.Transparent;
+                txt.BorderBrush = Brushes.Transparent;
+                txt.VerticalContentAlignment = VerticalAlignment.Top;
+
+                InkCanvas.SetLeft(txt, e.GetPosition(canvas).X);
+                InkCanvas.SetTop(txt, e.GetPosition(canvas).Y);
+
+                canvas.Children.Add(txt);
+                canvas.EditingMode = InkCanvasEditingMode.Select;
+                canvas.Cursor = Cursors.Arrow;
+
+                selectedTextbox = txt;
+                canvas.Select(canvas.Strokes, new UIElement[] { txt });
+            }
+            else if (e.Source.GetType() == typeof(TextBox))
+            {
+                selectedTextbox = e.Source as TextBox;
+                canvas.Select(canvas.Strokes, new UIElement[] { e.Source as TextBox });
+                UpdateSetUpTextBox(selectedTextbox);
+            }
+            else
+            {
+                canvas.Cursor = Cursors.Arrow;
+            }
+        }
+        private void btnTextAlignLeft_Selected(object sender, RoutedEventArgs e)
+        {
+            textAlignment = TextAlignment.Left;
+            if (selectedTextbox != null)
+                selectedTextbox.TextAlignment = TextAlignment.Left;
+        }
+
+        private void btnTextAlignCenter_Selected(object sender, RoutedEventArgs e)
+        {
+            textAlignment = TextAlignment.Center;
+            if (selectedTextbox != null)
+                selectedTextbox.TextAlignment = TextAlignment.Center;
+        }
+
+        private void btnTextAlignRight_Selected(object sender, RoutedEventArgs e)
+        {
+            textAlignment = TextAlignment.Right;
+            if (selectedTextbox != null)
+                selectedTextbox.TextAlignment = TextAlignment.Right;
+        }
+
+        private void btnTextAlignJustify_Selected(object sender, RoutedEventArgs e)
+        {
+            textAlignment = TextAlignment.Justify;
+            if (selectedTextbox != null)
+                selectedTextbox.TextAlignment = TextAlignment.Justify;
+        }
+
+        private void btnTextAllignTop_Selected(object sender, RoutedEventArgs e)
+        {
+            verticalContentAlignment = VerticalAlignment.Top;
+            if (selectedTextbox != null)
+                selectedTextbox.VerticalContentAlignment = VerticalAlignment.Top;
+        }
+
+        private void btnTextVerticalAlignCenter_Selected(object sender, RoutedEventArgs e)
+        {
+            verticalContentAlignment = VerticalAlignment.Center;
+            if (selectedTextbox != null)
+                selectedTextbox.VerticalContentAlignment = VerticalAlignment.Center;
+        }
+
+        private void btnTextAllignBottom_Selected(object sender, RoutedEventArgs e)
+        {
+            verticalContentAlignment = VerticalAlignment.Bottom;
+            if (selectedTextbox != null)
+                selectedTextbox.VerticalContentAlignment = VerticalAlignment.Bottom;
+        }
+
+        private void UpdateSetUpTextBox(TextBox t)
+        {
+            fontFamily = t.FontFamily;
+            fontSize = t.FontSize;
+            fontStyle = t.FontStyle;
+            fontWeight = t.FontWeight;
+            foreground = t.Foreground;
+            textAlignment = t.TextAlignment;
+            verticalContentAlignment = t.VerticalContentAlignment;
+            textDecorations = t.TextDecorations;
+        }
+
+        private void tbFontSize_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            fontSize = Convert.ToInt32(tbFontSize.Text);
+            if (selectedTextbox != null)
+                selectedTextbox.FontSize = fontSize;
+        }
+
+        private void btnVideo_Click(object sender, RoutedEventArgs e)
+        {
+            canvas.Cursor = Cursors.Arrow;
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.FileName = "Videos"; // Default file name 
+            dialog.DefaultExt = ".mp4"; // Default file extension 
+            dialog.Filter = "MP4 Files (*.mp4)|*.mp4"; // Filter files by extension  
+
+            Nullable<bool> result = dialog.ShowDialog();
+            if (result == true)
+            {
+                media.Source = new Uri(dialog.FileName);
+            }
+        }
+
+        private void btnFrame_Click(object sender, RoutedEventArgs e)
+        {
+            canvas.Cursor = Cursors.Arrow;
+            canvas.EditingMode = InkCanvasEditingMode.Select;
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.Filter = "PNG Files (*.png)|*.png";
+
+            Nullable<bool> result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                frameImage.Source = new BitmapImage(new Uri(dlg.FileName));
+            }
         }
     }
 }

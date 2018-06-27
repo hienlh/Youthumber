@@ -8,5 +8,8 @@ namespace YouThumbnailer
 {
     class Template
     {
+        private string source;
+        private string[] texts;
+        private string[] images;
     }
 }

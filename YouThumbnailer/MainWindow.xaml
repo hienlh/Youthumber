@@ -19,11 +19,90 @@
     <StackPanel>
         <ToolBar ClipToBounds="False">
             <Button Click="Button_Click" Content="Snapshot"/>
-            <Button Click="Button_Click" Content="Select Video"/>
-            <Button Click="Button_Click" Content="Select Frame"/>
+            <Button Click="btnVideo_Click" Content="Select Video"/>
+            <Button Click="btnFrame_Click" Content="Select Frame"/>
             <Button ToolTip="Format text background color" Click="btnText_Click" Name="btnText">
-                <materialDesign:PackIcon Kind="FormatText"  />
+                <materialDesign:PackIcon Kind="CursorText"  />
             </Button>
+            <materialDesign:PopupBox StaysOpen="True" Width="54" Background="White">
+                <materialDesign:PopupBox.ToggleContent>
+                    <materialDesign:PackIcon Kind="FormatSize" Foreground="{Binding ElementName=btnText, Path=Foreground}"/>
+                </materialDesign:PopupBox.ToggleContent>
+                <Grid Width="300" Margin="8,8,8,8">
+                    <Grid.Resources>
+                        <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+                            <Setter Property="Margin" Value="8,8,10,8" />
+                        </Style>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+                            <Setter Property="materialDesign:HintAssist.IsFloating" Value="True" />
+                            <Setter Property="Margin" Value="8,8,8,8" />
+                        </Style>
+                    </Grid.Resources>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+
+                    </Grid.RowDefinitions>
+                    <Slider
+                                Name="angelObject"
+                                TickFrequency="4"
+                                TickPlacement="BottomRight"
+                                Orientation="Horizontal"
+                                Minimum="4"
+                                Maximum="120" 
+                                Value="14"
+                                IsSelectionRangeEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Grid.Row="0"
+                            />
+                    <TextBox Name="tbFontSize" Margin="20" HorizontalContentAlignment="Center" Grid.Row="1" Text="{Binding ElementName=angelObject, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="tbFontSize_TextChanged"></TextBox>
+                </Grid>
+            </materialDesign:PopupBox>
+            <materialDesign:PopupBox Width="54" Background="White">
+                <materialDesign:PopupBox.ToggleContent>
+                    <materialDesign:PackIcon Kind="FilterVariant" Foreground="{Binding ElementName=btnText, Path=Foreground}"/>
+                </materialDesign:PopupBox.ToggleContent>
+                <ToolBar>
+                    <ListBox SelectedIndex="0">
+
+                        <ListBoxItem Name="btnTextAlignLeft" Selected="btnTextAlignLeft_Selected">
+                            <materialDesign:PackIcon
+                                    Kind="FormatAlignLeft" />
+                        </ListBoxItem>
+                        <ListBoxItem Name="btnTextAlignCenter" Selected="btnTextAlignCenter_Selected">
+                            <materialDesign:PackIcon
+                                    Kind="FormatAlignCenter" />
+                        </ListBoxItem>
+                        <ListBoxItem Name="btnTextAlignRight" Selected="btnTextAlignRight_Selected">
+                            <materialDesign:PackIcon
+                                    Kind="FormatAlignRight" />
+                        </ListBoxItem>
+                        <ListBoxItem Name="btnTextAlignJustify" Selected="btnTextAlignJustify_Selected">
+                            <materialDesign:PackIcon
+                                    Kind="FormatAlignJustify" />
+                        </ListBoxItem>
+                    </ListBox>
+
+                    <Separator/>
+                    <ListBox SelectedIndex="0">
+
+                        <ListBoxItem ToolTip="Allign top" Name="btnTextAllignTop" Selected="btnTextAllignTop_Selected">
+                            <materialDesign:PackIcon
+                                    Kind="FormatAlignTop" />
+                        </ListBoxItem>
+                        <ListBoxItem ToolTip="Allign center" Name="btnTextVerticalAlignCenter" Selected="btnTextVerticalAlignCenter_Selected">
+                            <materialDesign:PackIcon
+                                    Kind="FormatVerticalAlignCenter" />
+                        </ListBoxItem>
+                        <ListBoxItem ToolTip="Allign bottom" Name="btnTextAllignBottom" Selected="btnTextAllignBottom_Selected">
+                            <materialDesign:PackIcon
+                                    Kind="FormatAlignBottom" />
+                        </ListBoxItem>
+
+                    </ListBox>
+                </ToolBar>
+            </materialDesign:PopupBox>
         </ToolBar>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -35,18 +114,18 @@
                 </ListView>
             </ScrollViewer>
             <Canvas Grid.Column="1" Height="360" Width="640">
-                <Canvas x:Name="canvas" Background="Blue" Height="720" Width="1280" RenderTransformOrigin="0,0">
-                    <Canvas.RenderTransform>
+                <InkCanvas x:Name="canvas" EditingMode="Select" Background="Blue" Height="720" Width="1280" RenderTransformOrigin="0,0" PreviewMouseLeftButtonDown="canvas_PreviewMouseLeftButtonDown">
+                    <InkCanvas.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
                             <SkewTransform/>
                             <RotateTransform/>
                             <TranslateTransform/>
                         </TransformGroup>
-                    </Canvas.RenderTransform>
+                    </InkCanvas.RenderTransform>
                     <MediaElement x:Name="media" Height="{Binding ElementName=canvas, Path=ActualHeight}" Width="{Binding ElementName=canvas, Path=ActualWidth}" Stretch="Fill" Source="E:\Video\10000000_146471232669584_4994480682399956992_n.mp4" LoadedBehavior="Pause" MediaOpened="media_MediaOpened" />
-                    <Image Height="{Binding ElementName=canvas, Path=ActualHeight}" Width="{Binding ElementName=canvas, Path=ActualWidth}" Source="Resource/Thumbnail.png" />
-                </Canvas>
+                    <Image x:Name="frameImage" Height="{Binding ElementName=canvas, Path=ActualHeight}" Width="{Binding ElementName=canvas, Path=ActualWidth}" Source="Resource/Thumbnail.png" />
+                </InkCanvas>
                 <Slider x:Name="slider" Width="640" Canvas.Bottom="0" Minimum="0" Maximum="100" Value="0" ValueChanged="slider_ValueChanged" />
             </Canvas>
         </Grid>
