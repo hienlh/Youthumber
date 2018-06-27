@@ -1,0 +1,41 @@
+﻿<Window x:Class="YouThumbnailer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YouThumbnailer"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="475" Width="800" WindowState="Normal" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <StackPanel>
+        <ToolBar ClipToBounds="False">
+            <Button Click="Button_Click" Content="Snapshot"/>
+            <Button Click="Button_Click" Content="Select Video"/>
+            <Button Click="Button_Click" Content="Select Frame"/>
+        </ToolBar>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="640"/>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer Grid.Column="0">
+                <ListView>
+                </ListView>
+            </ScrollViewer>
+            <Canvas Grid.Column="1" Height="360" Width="640">
+                <Canvas x:Name="canvas" Background="Blue" Height="360" Width="640" RenderTransformOrigin="0,0">
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
+                    <MediaElement x:Name="media" Height="{Binding ElementName=canvas, Path=ActualHeight}" Width="{Binding ElementName=canvas, Path=ActualWidth}" Stretch="Fill" Source="E:\Video\10000000_146471232669584_4994480682399956992_n.mp4" LoadedBehavior="Pause" MediaOpened="media_MediaOpened" />
+                    <Image Height="{Binding ElementName=canvas, Path=ActualHeight}" Width="{Binding ElementName=canvas, Path=ActualWidth}" Source="Resource/Thumbnail.png" />
+                </Canvas>
+                <Slider x:Name="slider" Width="640" Canvas.Bottom="0" Minimum="0" Maximum="100" Style="{StaticResource MaterialDesignDiscreteSlider}" Value="0" ToolTip="MaterialDesignDiscreteSlider" ValueChanged="slider_ValueChanged" />
+            </Canvas>
+        </Grid>
+    </StackPanel>
+</Window>
