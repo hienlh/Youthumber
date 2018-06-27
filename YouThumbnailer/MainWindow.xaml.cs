@@ -83,5 +83,10 @@ namespace YouThumbnailer
             slider.Maximum = media.NaturalDuration.TimeSpan.TotalSeconds;
             media.ScrubbingEnabled = true;
         }
+
+        private void btnText_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
